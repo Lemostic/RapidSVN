@@ -1,0 +1,34 @@
+name: Windows Release Build
+
+on:
+  push:
+    branches:
+      - upgrade-subversion-dependency
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install Dependencies
+      run: |
+        choco install subversion wxwidgets boost apr
+
+    - name: Configure CMake
+      run: |
+        mkdir build
+        cd build
+        cmake .. -DCMAKE_BUILD_TYPE=Release
+
+    - name: Build
+      run: |
+        cmake --build . --config Release
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: RapidSVN
+        path: build/Release/*.exe
